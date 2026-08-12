@@ -1,0 +1,69 @@
+@baseUrl = http://localhost:7071/api
+
+### ---------------------------------------------------
+### Scenario 1: Valid expense under $100 (Auto-approved)
+### ---------------------------------------------------
+POST {{baseUrl}}/orchestrators/expense_orchestrator
+Content-Type: application/json
+
+{"employee_name": "Alice", "employee_email": "alice@test.com", "amount": 50.00, "category": "meals", "description": "Lunch", "manager_email": "boss@test.com"}
+
+
+### ---------------------------------------------------
+### Scenario 2: Valid expense >= $100, manager approves
+### ---------------------------------------------------
+# Step 2A: Send this, copy the "id" from the response
+POST {{baseUrl}}/orchestrators/expense_orchestrator
+Content-Type: application/json
+
+{"employee_name": "Bob", "employee_email": "bob@test.com", "amount": 150.00, "category": "travel", "description": "Flight", "manager_email": "boss@test.com"}
+
+### Step 2B: Paste the ID below to APPROVE
+POST {{baseUrl}}/approve_expense/71e383151e574eefb5a9ed965fd323ed
+Content-Type: application/json
+
+{"decision": "APPROVE"}
+
+
+### ---------------------------------------------------
+### Scenario 3: Valid expense >= $100, manager rejects
+### ---------------------------------------------------
+# Step 3A: Send this, copy the "id" from the response
+POST {{baseUrl}}/orchestrators/expense_orchestrator
+Content-Type: application/json
+
+{"employee_name": "Carol", "employee_email": "carol@test.com", "amount": 200.00, "category": "supplies", "description": "Desk", "manager_email": "boss@test.com"}
+
+### Step 3B: Paste the ID below to REJECT
+POST {{baseUrl}}/approve_expense/113ec06235f74a0e864cd55dacad8be9
+Content-Type: application/json
+
+{"decision": "REJECT"}
+
+
+### ---------------------------------------------------
+### Scenario 4: Valid >= $100, no manager response (Timeout)
+### ---------------------------------------------------
+# Send this and WAIT 2 MINUTES without approving or rejecting.
+POST {{baseUrl}}/orchestrators/expense_orchestrator
+Content-Type: application/json
+
+{"employee_name": "Dave", "employee_email": "dave@test.com", "amount": 500.00, "category": "equipment", "description": "Laptop", "manager_email": "boss@test.com"}
+
+
+### ---------------------------------------------------
+### Scenario 5: Missing required fields (Validation error)
+### ---------------------------------------------------
+POST {{baseUrl}}/orchestrators/expense_orchestrator
+Content-Type: application/json
+
+{"employee_name": "Eve", "amount": 50.00}
+
+
+### ---------------------------------------------------
+### Scenario 6: Invalid category (Validation error)
+### ---------------------------------------------------
+POST {{baseUrl}}/orchestrators/expense_orchestrator
+Content-Type: application/json
+
+{"employee_name": "Frank", "employee_email": "frank@test.com", "amount": 75.00, "category": "party", "description": "Balloons", "manager_email": "boss@test.com"}

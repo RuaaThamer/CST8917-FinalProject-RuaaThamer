@@ -1,0 +1,7 @@
+@logicAppUrl = PASTE_LOGIC_APP_URL_HERE
+
+### Scenario 1: Valid expense under $100
+POST {{logicAppUrl}}
+Content-Type: application/json
+
+{"employee_name": "Alice", "employee_email": "alice@test.com", "amount": 50.00, "category": "meals", "description": "Lunch", "manager_email": "boss@test.com"}
